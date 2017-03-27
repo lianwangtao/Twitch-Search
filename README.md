@@ -1,6 +1,6 @@
-# WebDevTemplate
+# Twitch Search
 
-The goal is to create a template project with modern tools and boilerplate code already setup. Eventually, the commits in this repo could be squashed down into one commit that contains the final template, but for now it will hold all the commits leading up to that.
+This app interacts with the Twitch Public API and retrieve a list of stream channels based on search query entered by user.
 
 ## Tools
 
@@ -18,9 +18,3 @@ The goal is to create a template project with modern tools and boilerplate code 
 
 - ESLint
   - Linter tool
-
-## Coming Soon
-
-- Redux
-- Hot Module Reloading
-- Gulp?
