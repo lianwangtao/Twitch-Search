@@ -1,0 +1,38 @@
+{
+  "name": "WebDevTemplate",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "",
+    "lint": "eslint .",
+    "webpack-watch": "webpack -w",
+    "express-server": "node ./server",
+    "dev": "concurrently --kill-others \"yarn run webpack-watch\" \"yarn run express-server\"",
+    "shane": "gulp"
+  },
+  "dependencies": {
+    "babel-loader": "^6.2.7",
+    "babel-plugin-transform-class-properties": "^6.19.0",
+    "babel-plugin-transform-runtime": "^6.15.0",
+    "babel-polyfill": "^6.16.0",
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-0": "^6.16.0",
+    "babel-register": "^6.18.0",
+    "express": "^4.14.0",
+    "material-ui": "^0.17.1",
+    "react": "^15.4.0",
+    "react-dom": "^15.4.0",
+    "react-redux": "^4.4.6",
+    "react-tap-event-plugin": "^2.0.1",
+    "redux": "^3.6.0",
+    "webpack": "^1.13.3"
+  },
+  "devDependencies": {
+    "concurrently": "^3.1.0",
+    "eslint": "^3.10.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "2.2.3",
+    "eslint-plugin-react": "^6.7.1"
+  }
+}
