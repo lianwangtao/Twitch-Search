@@ -23,4 +23,3 @@ module.exports = {
     extension: ['', '.js', '.jsx', '.json']
   }
 }
-

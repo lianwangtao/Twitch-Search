@@ -21520,7 +21520,7 @@
 	        {
 	          style: {
 	            backgroundColor: 'white',
-	            paddingLeft: 10,
+	            padding: 30,
 	            textAlign: 'center'
 	          }
 	        },
@@ -21573,7 +21573,19 @@
 	          null,
 	          _react2.default.createElement(_materialUi.AppBar, {
 	            title: 'Twitch Search',
-	            iconElementLeft: null
+	            iconElementLeft: _react2.default.createElement(
+	              'i',
+	              {
+	                className: 'material-icons',
+	                style: {
+	                  position: 'relative',
+	                  bottom: -8,
+	                  color: 'white',
+	                  marigin: '0 10'
+	                }
+	              },
+	              'live_tv'
+	            )
 	          }),
 	          _react2.default.createElement(
 	            'div',

@@ -39,7 +39,7 @@ export default class App extends React.Component {
       <div
         style={{
           backgroundColor: 'white',
-          paddingLeft: 10,
+          padding: 30,
           textAlign: 'center',
         }}
         >
@@ -78,7 +78,19 @@ export default class App extends React.Component {
         <div>
           <AppBar
             title="Twitch Search"
-            iconElementLeft={null}
+            iconElementLeft={
+              <i
+                className="material-icons"
+                style={{
+                  position: 'relative',
+                  bottom: -8,
+                  color: 'white',
+                  marigin: '0 10',
+                }}
+                >
+                live_tv
+              </i>
+            }
            />
           <div>
             {searchBar}
