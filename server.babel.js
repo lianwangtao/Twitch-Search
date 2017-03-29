@@ -19,15 +19,16 @@ app.use('/', express.static('public'))
 
 app.get('/search', (req, res) => {
   const keyword = req.query.keyword
-  // const offset = req.query.offset
-  console.log('req:', req.query)
-  console.log('keyword:', keyword)
+  const page = req.query.page
+  const limit = 10
+  const offset = limit * ( page - 1 )
   const url = 'https://api.twitch.tv/kraken/search/'
-  const query = 'streams?q=' + keyword
-  const limit  = '&limit=10'
+  const keywordQuery = 'streams?q=' + keyword
+  const limitQuery  = '&limit=' + limit
+  const offsetQuery = '&offset=' + offset
 
   request({
-    url: url + query + limit,
+    url: url + keywordQuery + limitQuery + offsetQuery,
     headers: {
       'Client-ID': cliend_id,
       'Content-type': 'application/json',

@@ -62,7 +62,11 @@
 
 	_reactDom2.default.render(_react2.default.createElement(
 	  'div',
-	  null,
+	  {
+	    style: {
+	      fontFamily: 'Roboto, San Serif'
+	    }
+	  },
 	  _react2.default.createElement(_App2.default, null)
 	), document.getElementById('root'));
 
@@ -21471,8 +21475,6 @@
 
 	var _materialUi = __webpack_require__(179);
 
-	var _colors = __webpack_require__(458);
-
 	var _MuiThemeProvider = __webpack_require__(453);
 
 	var _MuiThemeProvider2 = _interopRequireDefault(_MuiThemeProvider);
@@ -21503,11 +21505,7 @@
 
 	var muiTheme = (0, _getMuiTheme2.default)({
 	  palette: {
-	    primary1Color: '#6441A4',
-	    textColor: _colors.darkBlack,
-	    alternateTextColor: _colors.white,
-	    canvasColor: _colors.white,
-	    shadowColor: _colors.fullBlack
+	    primary1Color: '#6441A4'
 	  }
 	});
 
@@ -21520,32 +21518,89 @@
 	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
 	    _this.handleKeyword = _this.handleKeyword.bind(_this);
+	    _this.handlePreviousPage = _this.handlePreviousPage.bind(_this);
+	    _this.handleNextPage = _this.handleNextPage.bind(_this);
 	    _this.handleSearch = _this.handleSearch.bind(_this);
 
 	    _this.state = {
-	      keyword: ''
+	      keyword: '',
+	      currentPage: 1
 	    };
 	    return _this;
 	  }
 
 	  _createClass(App, [{
+	    key: 'handleSearch',
+	    value: function handleSearch() {
+	      this.setState({ currentPage: 1 });
+	      this.fetchResults();
+	    }
+	  }, {
 	    key: 'handleKeyword',
 	    value: function handleKeyword(event) {
 	      this.setState({ keyword: event.target.value });
 	    }
 	  }, {
-	    key: 'handleSearch',
-	    value: function handleSearch(event) {
+	    key: 'handlePreviousPage',
+	    value: function handlePreviousPage() {
+	      var currentPage = this.state.currentPage;
+	      console.log('Pre');
+	      if (currentPage > 1) {
+	        this.setState({
+	          currentPage: currentPage - 1
+	        }, function () {
+	          this.fetchResults();
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'handleNextPage',
+	    value: function handleNextPage() {
+	      var currentPage = this.state.currentPage;
+	      if (currentPage < this.state.totalPage) {
+	        this.setState({
+	          currentPage: currentPage + 1
+	        }, function () {
+	          this.fetchResults();
+	        });
+	      }
+	    }
+	  }, {
+	    key: 'fetchResults',
+	    value: function fetchResults() {
 	      var _this2 = this;
 
-	      console.log('Keyword:', this.state.keyword);
 	      _axios2.default.get('/search', {
 	        params: {
-	          keyword: this.state.keyword
+	          keyword: this.state.keyword,
+	          page: this.state.currentPage
 	        }
 	      }).then(function (response) {
 	        console.log('response:', response);
-	        _this2.setState({ resultsData: response.data });
+	        _this2.setState({
+	          resultsData: response.data,
+	          totalPage: Math.ceil(response.data._total / 10)
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'buildAppBar',
+	    value: function buildAppBar() {
+	      return _react2.default.createElement(_materialUi.AppBar, {
+	        title: 'Twitch Search',
+	        iconElementLeft: _react2.default.createElement(
+	          'i',
+	          {
+	            className: 'material-icons',
+	            style: {
+	              position: 'relative',
+	              bottom: -8,
+	              color: 'white',
+	              marigin: '0 10'
+	            }
+	          },
+	          'live_tv'
+	        )
 	      });
 	    }
 	  }, {
@@ -21557,7 +21612,9 @@
 	          style: {
 	            backgroundColor: 'white',
 	            padding: 30,
-	            display: 'flex'
+	            display: 'flex',
+	            alignItem: 'center',
+	            justifyContent: 'center'
 	          }
 	        },
 	        _react2.default.createElement(
@@ -21590,9 +21647,7 @@
 	              'i',
 	              {
 	                className: 'material-icons',
-	                style: {
-	                  color: 'white'
-	                }
+	                style: { color: 'white' }
 	              },
 	              'search'
 	            )
@@ -21614,40 +21669,61 @@
 	            var stream = _step.value;
 
 	            console.log('Stream:', stream);
+	            var id = stream.id;
+	            var name = stream.channel.display_name;
+	            var preview = stream.preview.medium;
+	            var game = stream.game;
+	            var viewers = stream.viewers;
+
 	            var result = _react2.default.createElement(
-	              'div',
+	              _materialUi.Card,
 	              {
+	                key: id,
 	                style: {
-	                  display: 'flex'
+	                  marginBottom: 30,
+	                  width: '100%',
+	                  alignSelf: 'center'
 	                }
 	              },
-	              _react2.default.createElement('img', {
-	                style: {
-	                  flex: '1 1 0',
-	                  width: '60%',
-	                  height: 'auto'
-	                },
-	                src: stream.preview.medium
-	              }),
 	              _react2.default.createElement(
-	                'div',
+	                _materialUi.CardText,
 	                {
 	                  style: {
-	                    flex: '3 1 0'
+	                    display: 'flex',
+	                    flexDirection: 'row'
 	                  }
 	                },
 	                _react2.default.createElement(
-	                  'h2',
-	                  null,
-	                  stream.channel.display_name
+	                  'div',
+	                  {
+	                    style: {
+	                      flex: '2 1 0'
+	                    }
+	                  },
+	                  _react2.default.createElement('img', { width: '100%', height: 'auto', src: preview })
 	                ),
 	                _react2.default.createElement(
-	                  'h3',
-	                  null,
-	                  stream.game,
-	                  ' - ',
-	                  stream.viewers,
-	                  ' viewers'
+	                  'div',
+	                  {
+	                    style: {
+	                      flex: '3 1 0',
+	                      padding: 10
+	                    }
+	                  },
+	                  _react2.default.createElement(
+	                    'h1',
+	                    null,
+	                    name
+	                  ),
+	                  _react2.default.createElement(
+	                    'h3',
+	                    {
+	                      style: { textColor: 'grey' }
+	                    },
+	                    game,
+	                    ' - ',
+	                    viewers
+	                  )
 	                )
 	              )
 	            );
@@ -21671,35 +21747,176 @@
 	      return results;
 	    }
 	  }, {
+	    key: 'buildPageNavigation',
+	    value: function buildPageNavigation() {
+	      if (this.state.resultsData) {
+	        var currentPage = this.state.currentPage;
+	        var totalPage = this.state.totalPage;
+	        console.log('Page:', currentPage);
+	        console.log('Total page:', totalPage);
+	        return _react2.default.createElement(
+	          'div',
+	          {
+	            style: {
+	              display: 'flex',
+	              justifyContent: 'flex-end'
+	            }
+	          },
+	          _react2.default.createElement(
+	            _materialUi.IconButton,
+	            {
+	              tooltip: 'Previous Page',
+	              tooltipPosition: 'top-right',
+	              onTouchTap: this.handlePreviousPage
+	            },
+	            _react2.default.createElement(
+	              'i',
+	              {
+	                className: 'material-icons'
+	              },
+	              'keyboard_arrow_left'
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'h3',
+	            {
+	              style: {
+	                position: 'relative',
+	                top: -6
+	              }
+	            },
+	            currentPage,
+	            '/',
+	            totalPage
+	          ),
+	          _react2.default.createElement(
+	            _materialUi.IconButton,
+	            {
+	              tooltip: 'Next Page',
+	              tooltipPosition: 'top-right',
+	              onTouchTap: this.handleNextPage
+	            },
+	            _react2.default.createElement(
+	              'i',
+	              {
+	                className: 'material-icons'
+	              },
+	              'keyboard_arrow_right'
+	            )
+	          )
+	        );
+	      }
+	      return '';
+	    }
+	  }, {
 	    key: 'buildResults',
 	    value: function buildResults() {
 	      if (this.state.resultsData) {
 	        var resultList = this.buildResultList();
+	        var pageNavigation = this.buildPageNavigation();
 	        var resultCount = this.state.resultsData._total;
-	        console.log('');
+
 	        return _react2.default.createElement(
 	          'div',
-	          null,
+	          {
+	            style: {
+	              minWidth: '80%'
+	            }
+	          },
 	          _react2.default.createElement(
 	            'div',
-	            null,
+	            {
+	              style: {
+	                display: 'flex'
+	              }
+	            },
 	            _react2.default.createElement(
-	              'h3',
-	              null,
-	              'Total results: ',
-	              resultCount
+	              'div',
+	              {
+	                style: {
+	                  flex: '1 1 0',
+	                  textAlign: 'left'
+	                }
+	              },
+	              _react2.default.createElement(
+	                'h3',
+	                {
+	                  style: {
+	                    position: 'relative',
+	                    top: -6
+	                  }
+	                },
+	                'Total results: ',
+	                resultCount
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              {
+	                style: {
+	                  flex: '1 1 0'
+	                }
+	              },
+	              pageNavigation
 	            )
 	          ),
-	          resultList
+	          _react2.default.createElement(
+	            'div',
+	            {
+	              style: {
+	                display: 'flex',
+	                flexDirection: 'column',
+	                alignItem: 'center',
+	                justifyContent: 'center'
+	              }
+	            },
+	            resultList
+	          )
 	        );
 	      }
-	      return "Type something to start searching!";
+	      return _react2.default.createElement(
+	        _materialUi.Card,
+	        {
+	          style: {
+	            width: '70%',
+	            height: 300
+	          }
+	        },
+	        _react2.default.createElement(
+	          _materialUi.CardText,
+	          {
+	            style: {
+	              padding: '10%',
+	              textAlign: 'center'
+	            }
+	          },
+	          _react2.default.createElement(
+	            'i',
+	            {
+	              className: 'material-icons',
+	              style: {
+	                fontSize: 64,
+	                color: 'grey'
+	              }
+	            },
+	            'search'
+	          ),
+	          _react2.default.createElement(
+	            'h2',
+	            { style: {
+	                color: 'grey'
+	              } },
+	            'Type something to start searching!'
+	          )
+	        )
+	      );
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var searchBar = this.buildSearchBar();
 	      var results = this.buildResults();
+	      var appBar = this.buildAppBar();
 
 	      return _react2.default.createElement(
 	        _MuiThemeProvider2.default,
@@ -21707,22 +21924,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          null,
-	          _react2.default.createElement(_materialUi.AppBar, {
-	            title: 'Twitch Search',
-	            iconElementLeft: _react2.default.createElement(
-	              'i',
-	              {
-	                className: 'material-icons',
-	                style: {
-	                  position: 'relative',
-	                  bottom: -8,
-	                  color: 'white',
-	                  marigin: '0 10'
-	                }
-	              },
-	              'live_tv'
-	            )
-	          }),
+	          appBar,
 	          _react2.default.createElement(
 	            'div',
 	            null,
@@ -21730,7 +21932,13 @@
 	          ),
 	          _react2.default.createElement(
 	            'div',
-	            null,
+	            {
+	              style: {
+	                display: 'flex',
+	                alignItem: 'center',
+	                justifyContent: 'center'
+	              }
+	            },
 	            results
 	          )
 	        )
