@@ -21544,7 +21544,6 @@
 	    key: 'handlePreviousPage',
 	    value: function handlePreviousPage() {
 	      var currentPage = this.state.currentPage;
-	      console.log('Pre');
 	      if (currentPage > 1) {
 	        this.setState({
 	          currentPage: currentPage - 1
@@ -21576,7 +21575,6 @@
 	          page: this.state.currentPage
 	        }
 	      }).then(function (response) {
-	        console.log('response:', response);
 	        _this2.setState({
 	          resultsData: response.data,
 	          totalPage: Math.ceil(response.data._total / 10)
@@ -21586,42 +21584,42 @@
 	  }, {
 	    key: 'buildAppBar',
 	    value: function buildAppBar() {
+	      var tvIcon = _react2.default.createElement(
+	        'i',
+	        {
+	          className: 'material-icons',
+	          style: {
+	            position: 'relative',
+	            bottom: -8,
+	            color: 'white',
+	            marigin: '0 10'
+	          }
+	        },
+	        'live_tv'
+	      );
+
 	      return _react2.default.createElement(_materialUi.AppBar, {
 	        title: 'Twitch Search',
-	        iconElementLeft: _react2.default.createElement(
-	          'i',
-	          {
-	            className: 'material-icons',
-	            style: {
-	              position: 'relative',
-	              bottom: -8,
-	              color: 'white',
-	              marigin: '0 10'
-	            }
-	          },
-	          'live_tv'
-	        )
+	        iconElementLeft: tvIcon
 	      });
 	    }
 	  }, {
 	    key: 'buildSearchBar',
 	    value: function buildSearchBar() {
+	      var searchSectionStyle = {
+	        backgroundColor: 'white',
+	        padding: 30,
+	        display: 'flex',
+	        alignItem: 'center',
+	        justifyContent: 'center'
+	      };
+
 	      return _react2.default.createElement(
 	        'div',
-	        {
-	          style: {
-	            backgroundColor: 'white',
-	            padding: 30,
-	            display: 'flex',
-	            alignItem: 'center',
-	            justifyContent: 'center'
-	          }
-	        },
+	        { style: searchSectionStyle },
 	        _react2.default.createElement(
 	          'div',
-	          {
-	            style: {}
-	          },
+	          null,
 	          _react2.default.createElement(_materialUi.TextField, {
 	            autoFocus: true,
 	            value: this.state.keyword,
@@ -21638,8 +21636,6 @@
 	            }
 	          },
 	          _react2.default.createElement(_materialUi.RaisedButton, {
-	            href: '',
-	            target: '_blank',
 	            label: 'Search',
 	            primary: true,
 	            onClick: this.handleSearch,
@@ -21656,188 +21652,236 @@
 	      );
 	    }
 	  }, {
+	    key: 'buildNoResult',
+	    value: function buildNoResult() {
+	      var errorIcon = _react2.default.createElement(
+	        'i',
+	        {
+	          className: 'material-icons',
+	          style: {
+	            fontSize: 64,
+	            color: 'grey'
+	          }
+	        },
+	        'error'
+	      );
+
+	      var cardTextStyle = {
+	        padding: '10%',
+	        textAlign: 'center'
+	      };
+
+	      return _react2.default.createElement(
+	        _materialUi.Card,
+	        { style: { minHeight: 300, minWidth: 600 } },
+	        _react2.default.createElement(
+	          _materialUi.CardText,
+	          { style: cardTextStyle },
+	          errorIcon,
+	          _react2.default.createElement(
+	            'h2',
+	            { style: { color: 'grey' } },
+	            'Sorry! We can\'t find any results!'
+	          )
+	        )
+	      );
+	    }
+	  }, {
 	    key: 'buildResultList',
 	    value: function buildResultList() {
-	      var results = [];
-	      if (this.state.resultsData && this.state.resultsData.streams) {
-	        var _iteratorNormalCompletion = true;
-	        var _didIteratorError = false;
-	        var _iteratorError = undefined;
 
-	        try {
-	          for (var _iterator = this.state.resultsData.streams[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var stream = _step.value;
+	      if (this.state.totalPage === 0) {
+	        var noResult = this.buildNoResult();
+	        return noResult;
+	      }
 
-	            console.log('Stream:', stream);
-	            var id = stream.id;
-	            var name = stream.channel.display_name;
-	            var preview = stream.preview.medium;
-	            var game = stream.game;
-	            var viewers = stream.viewers;
+	      if (this.state.resultsData.streams) {
+	        var results = this.state.resultsData.streams.map(function (stream, index) {
+	          var id = stream.id;
+	          var name = stream.channel.display_name;
+	          var preview = stream.preview.medium;
+	          var game = stream.game;
+	          var viewers = stream.viewers;
 
-	            var result = _react2.default.createElement(
-	              _materialUi.Card,
-	              {
-	                key: id,
-	                style: {
-	                  marginBottom: 30,
-	                  width: '100%',
-	                  alignSelf: 'center'
-	                }
-	              },
+	          var cardStyle = {
+	            marginBottom: 30,
+	            width: '100%',
+	            alignSelf: 'center'
+	          };
+
+	          var cardTextStyle = {
+	            display: 'flex',
+	            flexDirection: 'row'
+	          };
+
+	          var cardImageStyle = {
+	            flex: '2 1 0'
+	          };
+
+	          var cardContentStyle = {
+	            flex: '3 1 0',
+	            position: 'relative',
+	            top: -15,
+	            paddingLeft: 10
+	          };
+
+	          return _react2.default.createElement(
+	            _materialUi.Card,
+	            {
+	              key: index,
+	              style: cardStyle
+	            },
+	            _react2.default.createElement(
+	              _materialUi.CardText,
+	              { style: cardTextStyle },
 	              _react2.default.createElement(
-	                _materialUi.CardText,
-	                {
-	                  style: {
-	                    display: 'flex',
-	                    flexDirection: 'row'
-	                  }
-	                },
+	                'div',
+	                { style: cardImageStyle },
+	                _react2.default.createElement('img', { src: preview })
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { style: cardContentStyle },
 	                _react2.default.createElement(
-	                  'div',
-	                  {
-	                    style: {
-	                      flex: '2 1 0'
-	                    }
-	                  },
-	                  _react2.default.createElement('img', { width: '100%', height: 'auto', src: preview })
+	                  'h1',
+	                  null,
+	                  name
 	                ),
 	                _react2.default.createElement(
-	                  'div',
-	                  {
-	                    style: {
-	                      flex: '3 1 0',
-	                      padding: 10
-	                    }
-	                  },
-	                  _react2.default.createElement(
-	                    'h1',
-	                    null,
-	                    name
-	                  ),
-	                  _react2.default.createElement(
-	                    'h3',
-	                    {
-	                      style: { textColor: 'grey' }
-	                    },
-	                    game,
-	                    ' - ',
-	                    viewers
-	                  )
+	                  'h3',
+	                  { style: { textColor: 'grey' } },
+	                  game,
+	                  ' - ',
+	                  viewers
 	                )
 	              )
-	            );
-	            results.push(result);
-	          }
-	        } catch (err) {
-	          _didIteratorError = true;
-	          _iteratorError = err;
-	        } finally {
-	          try {
-	            if (!_iteratorNormalCompletion && _iterator.return) {
-	              _iterator.return();
-	            }
-	          } finally {
-	            if (_didIteratorError) {
-	              throw _iteratorError;
-	            }
-	          }
-	        }
+	            )
+	          );
+	        });
+	        return results;
 	      }
-	      return results;
 	    }
 	  }, {
 	    key: 'buildPageNavigation',
 	    value: function buildPageNavigation() {
-	      if (this.state.resultsData) {
+	      if (this.state.resultsData && this.state.totalPage !== 0) {
 	        var currentPage = this.state.currentPage;
 	        var totalPage = this.state.totalPage;
-	        console.log('Page:', currentPage);
-	        console.log('Total page:', totalPage);
-	        return _react2.default.createElement(
-	          'div',
+
+	        var navigationStyle = {
+	          display: 'flex',
+	          justifyContent: 'flex-end'
+	        };
+
+	        var previousPage = _react2.default.createElement(
+	          _materialUi.IconButton,
 	          {
-	            style: {
-	              display: 'flex',
-	              justifyContent: 'flex-end'
-	            }
+	            tooltip: 'Previous Page',
+	            tooltipPosition: 'top-right',
+	            onTouchTap: this.handlePreviousPage
 	          },
 	          _react2.default.createElement(
-	            _materialUi.IconButton,
+	            'i',
 	            {
-	              tooltip: 'Previous Page',
-	              tooltipPosition: 'top-right',
-	              onTouchTap: this.handlePreviousPage
+	              className: 'material-icons'
 	            },
-	            _react2.default.createElement(
-	              'i',
-	              {
-	                className: 'material-icons'
-	              },
-	              'keyboard_arrow_left'
-	            )
-	          ),
+	            'keyboard_arrow_left'
+	          )
+	        );
+
+	        var nextPage = _react2.default.createElement(
+	          _materialUi.IconButton,
+	          {
+	            tooltip: 'Next Page',
+	            tooltipPosition: 'top-right',
+	            onTouchTap: this.handleNextPage
+	          },
+	          _react2.default.createElement(
+	            'i',
+	            {
+	              className: 'material-icons'
+	            },
+	            'keyboard_arrow_right'
+	          )
+	        );
+
+	        var pageTextStyle = {
+	          position: 'relative',
+	          top: -6
+	        };
+
+	        return _react2.default.createElement(
+	          'div',
+	          { style: navigationStyle },
+	          previousPage,
 	          _react2.default.createElement(
 	            'h3',
-	            {
-	              style: {
-	                position: 'relative',
-	                top: -6
-	              }
-	            },
+	            { style: pageTextStyle },
 	            currentPage,
 	            '/',
 	            totalPage
 	          ),
-	          _react2.default.createElement(
-	            _materialUi.IconButton,
-	            {
-	              tooltip: 'Next Page',
-	              tooltipPosition: 'top-right',
-	              onTouchTap: this.handleNextPage
-	            },
-	            _react2.default.createElement(
-	              'i',
-	              {
-	                className: 'material-icons'
-	              },
-	              'keyboard_arrow_right'
-	            )
-	          )
+	          nextPage
 	        );
 	      }
 	      return '';
 	    }
 	  }, {
-	    key: 'buildResults',
-	    value: function buildResults() {
+	    key: 'buildContent',
+	    value: function buildContent() {
+	      if (!this.state.keyword) {
+	        var cardTextStyle = {
+	          padding: '10%',
+	          textAlign: 'center'
+	        };
+
+	        var searchIcon = _react2.default.createElement(
+	          'i',
+	          {
+	            className: 'material-icons',
+	            style: {
+	              fontSize: 64,
+	              color: 'grey'
+	            }
+	          },
+	          'search'
+	        );
+
+	        return _react2.default.createElement(
+	          _materialUi.Card,
+	          { style: { minWidth: 800 } },
+	          _react2.default.createElement(
+	            _materialUi.CardText,
+	            { style: cardTextStyle },
+	            searchIcon,
+	            _react2.default.createElement(
+	              'h2',
+	              { style: { color: 'grey' } },
+	              'Type something to start searching!'
+	            )
+	          )
+	        );
+	      }
+
 	      if (this.state.resultsData) {
 	        var resultList = this.buildResultList();
 	        var pageNavigation = this.buildPageNavigation();
 	        var resultCount = this.state.resultsData._total;
 
+	        var resultCountStyle = {
+	          flex: '1 1 0',
+	          textAlign: 'left'
+	        };
+
 	        return _react2.default.createElement(
 	          'div',
-	          {
-	            style: {
-	              minWidth: '80%'
-	            }
-	          },
+	          { style: { minWidth: 800 } },
 	          _react2.default.createElement(
 	            'div',
-	            {
-	              style: {
-	                display: 'flex'
-	              }
-	            },
+	            { style: { display: 'flex' } },
 	            _react2.default.createElement(
 	              'div',
-	              {
-	                style: {
-	                  flex: '1 1 0',
-	                  textAlign: 'left'
-	                }
-	              },
+	              { style: resultCountStyle },
 	              _react2.default.createElement(
 	                'h3',
 	                {
@@ -21852,11 +21896,7 @@
 	            ),
 	            _react2.default.createElement(
 	              'div',
-	              {
-	                style: {
-	                  flex: '1 1 0'
-	                }
-	              },
+	              { style: { flex: '1 1 0' } },
 	              pageNavigation
 	            )
 	          ),
@@ -21866,7 +21906,7 @@
 	              style: {
 	                display: 'flex',
 	                flexDirection: 'column',
-	                alignItem: 'center',
+	                alignItems: 'center',
 	                justifyContent: 'center'
 	              }
 	            },
@@ -21874,49 +21914,19 @@
 	          )
 	        );
 	      }
-	      return _react2.default.createElement(
-	        _materialUi.Card,
-	        {
-	          style: {
-	            width: '70%',
-	            height: 300
-	          }
-	        },
-	        _react2.default.createElement(
-	          _materialUi.CardText,
-	          {
-	            style: {
-	              padding: '10%',
-	              textAlign: 'center'
-	            }
-	          },
-	          _react2.default.createElement(
-	            'i',
-	            {
-	              className: 'material-icons',
-	              style: {
-	                fontSize: 64,
-	                color: 'grey'
-	              }
-	            },
-	            'search'
-	          ),
-	          _react2.default.createElement(
-	            'h2',
-	            { style: {
-	                color: 'grey'
-	              } },
-	            'Type something to start searching!'
-	          )
-	        )
-	      );
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var searchBar = this.buildSearchBar();
-	      var results = this.buildResults();
+	      var content = this.buildContent();
 	      var appBar = this.buildAppBar();
+
+	      var contentStyle = {
+	        display: 'flex',
+	        flexDirection: 'column',
+	        alignItems: 'center'
+	      };
 
 	      return _react2.default.createElement(
 	        _MuiThemeProvider2.default,
@@ -21932,14 +21942,8 @@
 	          ),
 	          _react2.default.createElement(
 	            'div',
-	            {
-	              style: {
-	                display: 'flex',
-	                alignItem: 'center',
-	                justifyContent: 'center'
-	              }
-	            },
-	            results
+	            { style: contentStyle },
+	            content
 	          )
 	        )
 	      );

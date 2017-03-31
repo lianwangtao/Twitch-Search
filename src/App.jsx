@@ -3,8 +3,8 @@ import {
   AppBar,
   Card,
   CardText,
-  CardMedia,
   TextField,
+  FlatButton,
   IconButton,
   RaisedButton,
 } from 'material-ui'
@@ -48,7 +48,6 @@ export default class App extends React.Component {
 
   handlePreviousPage() {
     const currentPage = this.state.currentPage
-    console.log('Pre')
     if (currentPage > 1) {
       this.setState({
         currentPage: currentPage - 1
@@ -76,7 +75,6 @@ export default class App extends React.Component {
         page: this.state.currentPage
       },
     }).then((response) => {
-      console.log('response:', response)
       this.setState({
         resultsData: response.data,
         totalPage: Math.ceil(response.data._total / 10)
@@ -85,41 +83,40 @@ export default class App extends React.Component {
   }
 
   buildAppBar() {
+    const tvIcon = (
+      <i
+        className="material-icons"
+        style={{
+          position: 'relative',
+          bottom: -8,
+          color: 'white',
+          marigin: '0 10',
+        }}
+      >
+        live_tv
+      </i>
+    )
+
     return (
       <AppBar
         title="Twitch Search"
-        iconElementLeft={
-          <i
-            className="material-icons"
-            style={{
-              position: 'relative',
-              bottom: -8,
-              color: 'white',
-              marigin: '0 10',
-            }}
-            >
-            live_tv
-          </i>
-        }
-       />
+        iconElementLeft={tvIcon}
+      />
     )
   }
 
   buildSearchBar() {
+    const searchSectionStyle = {
+      backgroundColor: 'white',
+      padding: 30,
+      display: 'flex',
+      alignItem: 'center',
+      justifyContent: 'center',
+    }
+
     return(
-      <div
-        style={{
-          backgroundColor: 'white',
-          padding: 30,
-          display: 'flex',
-          alignItem: 'center',
-          justifyContent: 'center',
-        }}
-        >
-        <div
-          style={{
-          }}
-          >
+      <div style={searchSectionStyle}>
+        <div>
           <TextField
             autoFocus
             value={this.state.keyword}
@@ -132,10 +129,8 @@ export default class App extends React.Component {
             paddingLeft: 10,
             paddingTop: 5,
           }}
-          >
+        >
           <RaisedButton
-            href=""
-            target="_blank"
             label="Search"
             primary
             onClick={this.handleSearch}
@@ -143,7 +138,7 @@ export default class App extends React.Component {
               <i
                 className="material-icons"
                 style={{ color: 'white' }}
-                >
+              >
                 search
               </i>
             }
@@ -153,133 +148,197 @@ export default class App extends React.Component {
     )
   }
 
+  buildNoResult() {
+    const errorIcon = (
+      <i
+        className="material-icons"
+        style={{
+          fontSize:64,
+          color: 'grey',
+        }}
+      >
+        error
+      </i>
+    )
+
+    const cardTextStyle = {
+      padding: '10%',
+      textAlign: 'center',
+    }
+
+    return (
+      <Card style={{ minHeight: 300, minWidth: 600 }}>
+        <CardText style={cardTextStyle}>
+          {errorIcon}
+          <h2 style={{ color: 'grey' }}>
+            Sorry! We can't find any results!
+          </h2>
+        </CardText>
+      </Card>
+    )
+  }
+
   buildResultList() {
-    const results = []
-    if (this.state.resultsData && this.state.resultsData.streams) {
-      for (const stream of this.state.resultsData.streams) {
-        console.log('Stream:', stream)
+
+    if (this.state.totalPage === 0) {
+      const noResult = this.buildNoResult()
+      return noResult
+    }
+
+    if (this.state.resultsData.streams) {
+      const results = this.state.resultsData.streams.map((stream, index) => {
         const id = stream.id
         const name = stream.channel.display_name
         const preview = stream.preview.medium
         const game = stream.game
         const viewers = stream.viewers
 
-        const result = (
+        const cardStyle = {
+          marginBottom: 30,
+          width: '100%',
+          alignSelf: 'center',
+        }
+
+        const cardTextStyle = {
+          display: 'flex',
+          flexDirection: 'row',
+        }
+
+        const cardImageStyle = {
+          flex: '2 1 0',
+        }
+
+        const cardContentStyle = {
+          flex: '3 1 0',
+          position: 'relative',
+          top: -15,
+          paddingLeft: 10,
+        }
+
+        return (
           <Card
-            key={id}
-            style={{
-              marginBottom: 30,
-              width: '100%',
-              alignSelf: 'center',
-            }}
+            key={index}
+            style={cardStyle}
           >
-            <CardText
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-              }}
-            >
-              <div
-                style={{
-                  flex: '2 1 0',
-                }}
-              >
-                <img width="100%" height="auto" src={preview} />
+            <CardText style={cardTextStyle}>
+              <div style={cardImageStyle}>
+                <img src={preview} />
               </div>
-              <div
-                style={{
-                  flex: '3 1 0',
-                  padding: 10,
-                }}
-                >
+              <div style={cardContentStyle}>
                 <h1>{name}</h1>
-                <h3
-                  style={{textColor: 'grey'}}
-                  >
+                <h3 style={{textColor: 'grey'}}>
                   {game} - {viewers}
                 </h3>
               </div>
             </CardText>
           </Card>
         )
-        results.push(result)
-      }
+      })
+      return results
     }
-    return results
   }
 
   buildPageNavigation() {
-    if (this.state.resultsData) {
+    if (this.state.resultsData && this.state.totalPage !== 0) {
       const currentPage = this.state.currentPage
       const totalPage = this.state.totalPage
-      console.log('Page:', currentPage)
-      console.log('Total page:', totalPage)
-      return(
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-          }}
+
+      const navigationStyle = {
+        display: 'flex',
+        justifyContent: 'flex-end',
+      }
+
+      const previousPage = (
+        <IconButton
+          tooltip="Previous Page"
+          tooltipPosition="top-right"
+          onTouchTap={this.handlePreviousPage}
+        >
+          <i
+            className="material-icons"
           >
-          <IconButton
-            tooltip="Previous Page"
-            tooltipPosition="top-right"
-            onTouchTap={this.handlePreviousPage}
-            >
-            <i
-              className="material-icons"
-              >
-              keyboard_arrow_left
-            </i>
-          </IconButton>
-          <h3
-            style={{
-              position: 'relative',
-              top: -6,
-            }}
-            >
+            keyboard_arrow_left
+          </i>
+        </IconButton>
+      )
+
+      const nextPage = (
+        <IconButton
+          tooltip="Next Page"
+          tooltipPosition="top-right"
+          onTouchTap={this.handleNextPage}
+        >
+          <i
+            className="material-icons"
+          >
+            keyboard_arrow_right
+          </i>
+        </IconButton>
+      )
+
+      const pageTextStyle = {
+        position: 'relative',
+        top: -6,
+      }
+
+      return(
+        <div style={navigationStyle}>
+          {previousPage}
+          <h3 style={pageTextStyle}>
             {currentPage}/{totalPage}
           </h3>
-          <IconButton
-            tooltip="Next Page"
-            tooltipPosition="top-right"
-            onTouchTap={this.handleNextPage}
-            >
-            <i
-              className="material-icons"
-              >
-              keyboard_arrow_right
-            </i>
-          </IconButton>
+          {nextPage}
         </div>
       )
     }
     return ''
   }
 
-  buildResults() {
+  buildContent() {
+    if (!this.state.keyword) {
+      const cardTextStyle = {
+        padding: '10%',
+        textAlign: 'center',
+      }
+
+      const searchIcon = (
+        <i
+          className="material-icons"
+          style={{
+            fontSize:64,
+            color: 'grey',
+          }}
+        >
+          search
+        </i>
+      )
+
+      return (
+        <Card style={{ minWidth: 800 }}>
+          <CardText style={cardTextStyle}>
+            {searchIcon}
+            <h2 style={{ color: 'grey' }}>
+              Type something to start searching!
+            </h2>
+          </CardText>
+        </Card>
+      )
+    }
+
     if (this.state.resultsData) {
       const resultList = this.buildResultList()
       const pageNavigation = this.buildPageNavigation()
       const resultCount = this.state.resultsData._total
 
+      const resultCountStyle = {
+        flex: '1 1 0',
+        textAlign: 'left',
+      }
+
       return(
-        <div
-          style={{
-            minWidth: '80%',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-            }}
-          >
-            <div
-              style={{
-                flex: '1 1 0',
-                textAlign: 'left',
-              }}
-            >
+        <div style={{ minWidth: 800 }}>
+          <div style={{ display: 'flex' }}>
+            <div style={resultCountStyle}>
               <h3
                 style={{
                   position: 'relative',
@@ -289,11 +348,7 @@ export default class App extends React.Component {
                 Total results: {resultCount}
               </h3>
             </div>
-            <div
-              style={{
-                flex: '1 1 0',
-              }}
-            >
+            <div style={{ flex: '1 1 0' }}>
               {pageNavigation}
             </div>
           </div>
@@ -301,7 +356,7 @@ export default class App extends React.Component {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              alignItem: 'center',
+              alignItems: 'center',
               justifyContent: 'center',
             }}
           >
@@ -310,42 +365,18 @@ export default class App extends React.Component {
         </div>
       )
     }
-    return (
-      <Card
-        style={{
-          width: '70%',
-          height: 300,
-        }}
-      >
-        <CardText
-          style={{
-            padding: '10%',
-            textAlign: 'center',
-          }}
-        >
-          <i
-            className="material-icons"
-            style={{
-              fontSize:64,
-              color: 'grey',
-            }}
-          >
-            search
-          </i>
-          <h2 style={{
-            color: 'grey',
-          }}>
-            Type something to start searching!
-          </h2>
-        </CardText>
-      </Card>
-    )
   }
 
   render() {
     const searchBar = this.buildSearchBar()
-    const results = this.buildResults()
+    const content = this.buildContent()
     const appBar = this.buildAppBar()
+
+    const contentStyle = {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    }
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -354,14 +385,8 @@ export default class App extends React.Component {
           <div>
             {searchBar}
           </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItem: 'center',
-              justifyContent: 'center',
-            }}
-            >
-            {results}
+          <div style={contentStyle}>
+            {content}
           </div>
         </div>
       </MuiThemeProvider>
