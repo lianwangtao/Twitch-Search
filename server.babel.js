@@ -35,7 +35,6 @@ app.get('/search', (req, res) => {
     },
   }, function (error, response, body) {
     if (error) {
-      console.log('Error:',error)
       res.send(400, 'Error in getting search result!')
       return
     }

@@ -1,13 +1,11 @@
 {
-  "name": "WebDevTemplate",
+  "name": "Twitch-Search",
   "version": "1.0.0",
   "scripts": {
-    "test": "",
     "lint": "eslint .",
     "webpack-watch": "webpack -w",
     "express-server": "node ./server",
-    "dev": "concurrently --kill-others \"yarn run webpack-watch\" \"yarn run express-server\"",
-    "shane": "gulp"
+    "dev": "concurrently --kill-others \"yarn run webpack-watch\" \"yarn run express-server\""
   },
   "dependencies": {
     "axios": "^0.15.3",
@@ -20,6 +18,7 @@
     "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.18.0",
     "body-parser": "^1.17.1",
+    "eslint": "^3.19.0",
     "express": "^4.14.0",
     "material-ui": "^0.17.1",
     "react": "^15.4.0",

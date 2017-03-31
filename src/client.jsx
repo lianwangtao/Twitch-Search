@@ -7,7 +7,7 @@ ReactDOM.render(
     style={{
       fontFamily: 'Roboto, San Serif',
     }}
-    >
+  >
     <App />
   </div>,
   document.getElementById('root')

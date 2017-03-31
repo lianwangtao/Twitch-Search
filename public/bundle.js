@@ -21697,7 +21697,6 @@
 
 	      if (this.state.resultsData.streams) {
 	        var results = this.state.resultsData.streams.map(function (stream, index) {
-	          var id = stream.id;
 	          var name = stream.channel.display_name;
 	          var preview = stream.preview.medium;
 	          var game = stream.game;
@@ -21752,7 +21751,8 @@
 	                  { style: { textColor: 'grey' } },
 	                  game,
 	                  ' - ',
-	                  viewers
+	                  viewers,
+	                  ' viewers'
 	                )
 	              )
 	            )

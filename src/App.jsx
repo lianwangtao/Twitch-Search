@@ -142,7 +142,7 @@ export default class App extends React.Component {
                 search
               </i>
             }
-            />
+          />
         </div>
       </div>
     )
@@ -187,7 +187,6 @@ export default class App extends React.Component {
 
     if (this.state.resultsData.streams) {
       const results = this.state.resultsData.streams.map((stream, index) => {
-        const id = stream.id
         const name = stream.channel.display_name
         const preview = stream.preview.medium
         const game = stream.game
@@ -227,7 +226,7 @@ export default class App extends React.Component {
               <div style={cardContentStyle}>
                 <h1>{name}</h1>
                 <h3 style={{textColor: 'grey'}}>
-                  {game} - {viewers}
+                  {game} - {viewers} viewers
                 </h3>
               </div>
             </CardText>
